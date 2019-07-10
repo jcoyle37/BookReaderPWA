@@ -3,53 +3,42 @@ import {
   Link
 } from 'react-router-dom';
 import $ from 'jquery';
-//according to https://archive.org/advancedsearch.php#raw    title contains rabbit and mediatype is texts,
-//https://archive.org/advancedsearch.php?q=title:(rabbit)%20AND%20mediatype:(texts)&output=json&callback=IAE.search_hits
-// =
-// https://archive.org/search.php?query=title%3A%28rabbit%29%20AND%20mediatype%3A%28texts%29#raw
-/*export default function Search () {
-  return (
-    <span>search here</span>
-  )
-}*/
 
-
-//todo: determine how to get the following URL:
-////ia800701.us.archive.org/BookReader/BookReaderJSIA.php?id=rabbitforeaster00carr&itemPath=/8/items/rabbitforeaster00carr&server=ia800701.us.archive.org&format=jsonp&subPrefix=rabbitforeaster00carr&requestUri=/details/rabbitforeaster00carr
-//based off the ID, rabbitforeaster00carr. This contains all the images which I can download
-
-/*questions to address:
--are there additional legal aspects to consider now that I'm downloading books locally?
+/*
+questions to address:
+- Are there additional legal aspects to consider now that we're downloading books locally?
+- What about these pay-to-preview books? Only leafs available to the preview show up. Should
+  I just exclude those from the search and if so, how?
 */
 
 function SearchResults(props) {
-  if(!props.query)
+  if(!props.query) //default view, no searches performed
     return (
       <div></div>
     )
-  else if(props.loading)
+  else if(props.loading) //if loading search query
     return (
       <div>
         Loading...
       </div>
     );
-  else {
+  else { //display search query
     return (
       <div>
         <h2>{props.results.length} Results for {props.query}</h2>
         <ul className='bookResults'>
           {props.results.map((book) => (
-            <a
-              href={`https://archive.org/details/${book.identifier}`}
-              target="_blank">
-                <li key={'bookResult_' + book.identifier}>
-                  <img
-                    src={`https://archive.org/services/img/${book.identifier}`} />
-                  <p>
-                    {book.title}
-                  </p>
-                </li>
-            </a>
+            <li key={'bookResult_' + book.identifier}>
+              <a href={`https://archive.org/details/${book.identifier}`}
+                 target="_blank">
+                <img
+                  src={`https://archive.org/services/img/${book.identifier}`} />
+                <p>
+                  {book.title}
+                </p>
+              </a>
+              <button onClick={() => props.onDownloadBook(book.identifier)}>Download</button>
+            </li>
           ))}
         </ul>
       </div>
@@ -62,23 +51,25 @@ class Search extends React.Component {
     super(props);
 
     this.state = {
-      input: '',
-      lastQuery: '',
+      input: '', //current query input
+      lastQuery: '', //last search query performed
       searchResults: [],
-      loading: true
+      loading: false //set 'true' when loading a search query
     };
 
     this.updateInput = this.updateInput.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
-  updateInput(e) {
+
+  updateInput(e) { //as user types into query input, update text
     const value = e.target.value;
 
     this.setState({
       input: value
     });
   }
-  handleSearch() {
+
+  handleSearch() { //triggered by clicking 'download' button
     this.setState((currentState) => {
       return {
         loading: true,
@@ -86,18 +77,18 @@ class Search extends React.Component {
       }
     });
 
-    const maxRows = 10; //defaults to 50; setting lower reduces server load
-    let query = 
-      'https://archive.org/advancedsearch.php?q=%28'
+    const maxRows = 10; //set to 0 for default (50); setting lower reduces server load
+    let query = //construct search URL (determined from https://archive.org/advancedsearch.php)
+      '///archive.org/advancedsearch.php?q=%28'
       + this.state.input + '%29%20AND%20mediatype%3A%28texts%29'
       + '&fl%5B%5D=creator&fl%5B%5D=description&fl%5B%5D=identifier'
       + '&fl%5B%5D=item_size&fl%5B%5D=publisher&fl%5B%5D=title'
       + '&fl%5B%5D=year&sort%5B%5D=downloads+desc&sort%5B%5D=&sort&page=1'
       + '&output=json&callback=IAE.search_hits';
-
     if(maxRows > 0)
       query += '&rows=' + maxRows;
-
+  
+    //perform search
     new Promise((resolve, reject) => {
 			$.ajax({
         url: query,
@@ -111,8 +102,6 @@ class Search extends React.Component {
         }
       });
 		}).then((res) => {
-      console.log('response', res);
-      
       this.setState(() => {
         return {
           searchResults: res.response.docs,
@@ -123,13 +112,52 @@ class Search extends React.Component {
       console.log(error);
 		});
   }
+
+  handleDownloadBook(id) {
+    new Promise((resolve, reject) => {
+      //get book metadata which will provide us with information needed to construct
+      //a URL we can use to call BookReaderJSIA.php, which will provide book leaf URIs
+      $.ajax({
+        url: '///archive.org/metadata/' + id,
+        type: 'GET',
+        dataType: 'jsonp',
+        success: function(res) {
+          resolve(res);
+        },
+        error: function(jqXHR) {
+          reject('error', jqXHR);
+        }
+      });
+		}).then((metadata) => {
+      //construct URL with which we will call BookReaderJSIA.php
+      const reqUrl =
+        '///' + metadata.server + '/BookReader/BookReaderJSIA.php?id='
+        + metadata.metadata.identifier + '&itemPath=' + metadata.dir
+        + '&server=' + metadata.server + '&format=jsonp';
+
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: reqUrl,
+          type: 'GET',
+          dataType: 'jsonp'
+        }).then(function(res) {
+          resolve(res.data);
+        });
+      });
+    }).then((bookData) => { //leaf information contained in this object
+      console.log('bookData', bookData);
+		}).catch((error) => {
+      console.log(error);
+		});
+  }
+
   render() {
     return (
       <div>
         <h1>Search The Internet Archive</h1>
         <input
           type='Text'
-          placeholder='Author and/or title'
+          placeholder='Query'
           value={this.state.input}
           onChange={this.updateInput}
         />
@@ -141,6 +169,7 @@ class Search extends React.Component {
           results={this.state.searchResults}
           query={this.state.lastQuery}
           loading={this.state.loading}
+          onDownloadBook={this.handleDownloadBook}
         />
       </div>
     );
