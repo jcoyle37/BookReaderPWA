@@ -1,14 +1,11 @@
 import React from 'react';
-import {
-  Link
-} from 'react-router-dom';
 import $ from 'jquery';
 
 /*
 questions to address:
 - Are there additional legal aspects to consider now that we're downloading books locally?
-- What about these pay-to-preview books? Only leafs available to the preview show up. Should
-  I just exclude those from the search and if so, how?
+- Why is Analysis Communication Process in Mcdonalds showing 'Can't Find Image Stack' upon
+  initial download request?
 */
 
 function SearchResults(props) {
@@ -30,9 +27,12 @@ function SearchResults(props) {
           {props.results.map((book) => (
             <li key={'bookResult_' + book.identifier}>
               <a href={`https://archive.org/details/${book.identifier}`}
-                 target="_blank">
+                 target="_blank"
+                 rel="noopener noreferrer">
                 <img
-                  src={`https://archive.org/services/img/${book.identifier}`} />
+                  src={`https://archive.org/services/img/${book.identifier}`}
+                  alt=''
+                />
                 <p>
                   {book.title}
                 </p>
@@ -77,10 +77,11 @@ class Search extends React.Component {
       }
     });
 
-    const maxRows = 10; //set to 0 for default (50); setting lower reduces server load
+    const maxRows = 50; //set to 0 for default (50); setting lower reduces server load
     let query = //construct search URL (determined from https://archive.org/advancedsearch.php)
       '///archive.org/advancedsearch.php?q=%28'
       + this.state.input + '%29%20AND%20mediatype%3A%28texts%29'
+      + '%20AND%20-collection%3A%28printdisabled%29' //selects books that don't require borrowing
       + '&fl%5B%5D=creator&fl%5B%5D=description&fl%5B%5D=identifier'
       + '&fl%5B%5D=item_size&fl%5B%5D=publisher&fl%5B%5D=title'
       + '&fl%5B%5D=year&sort%5B%5D=downloads+desc&sort%5B%5D=&sort&page=1'
@@ -98,7 +99,7 @@ class Search extends React.Component {
           resolve(res);
         },
         error: function(jqXHR) {
-          reject('error', jqXHR);
+          reject(jqXHR);
         }
       });
 		}).then((res) => {
@@ -125,7 +126,7 @@ class Search extends React.Component {
           resolve(res);
         },
         error: function(jqXHR) {
-          reject('error', jqXHR);
+          reject(jqXHR);
         }
       });
 		}).then((metadata) => {
@@ -139,16 +140,20 @@ class Search extends React.Component {
         $.ajax({
           url: reqUrl,
           type: 'GET',
-          dataType: 'jsonp'
-        }).then(function(res) {
-          resolve(res.data);
+          dataType: 'jsonp',
+          success: function(res) {
+            resolve(res.data);
+          },
+          error: function(jqXHR) {
+            reject(jqXHR);
+          }
         });
+      }).then((bookData) => { //leaf information contained in this object
+        console.log('bookData', bookData);
+      }).catch((error) => {
+        console.log(error);
       });
-    }).then((bookData) => { //leaf information contained in this object
-      console.log('bookData', bookData);
-		}).catch((error) => {
-      console.log(error);
-		});
+    });
   }
 
   render() {

@@ -4,10 +4,8 @@ import Header from './Header';
 import Search from './Search';
 import {
   BrowserRouter,
-  Route,
-  NavLink
+  Route
 } from 'react-router-dom';
-import $ from 'jquery';
 
 //https://facebook.github.io/create-react-app/docs/deployment#serving-apps-with-client-side-routing
 
