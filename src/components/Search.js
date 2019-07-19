@@ -1,13 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
 
-/*
-questions to address:
-- Are there additional legal aspects to consider now that we're downloading books locally?
-- Why is Analysis Communication Process in Mcdonalds showing 'Can't Find Image Stack' upon
-  initial download request?
-*/
-
 function SearchResults(props) {
   if(!props.query) //default view, no searches performed
     return (
@@ -51,7 +44,7 @@ class Search extends React.Component {
     super(props);
 
     this.state = {
-      input: '', //current query input
+      input: 'the animals rebellion', //current query input
       lastQuery: '', //last search query performed
       searchResults: [],
       loading: false //set 'true' when loading a search query
@@ -77,7 +70,7 @@ class Search extends React.Component {
       }
     });
 
-    const maxRows = 50; //set to 0 for default (50); setting lower reduces server load
+    const maxRows = 10; //set to 0 for default (50); setting lower reduces server load
     let query = //construct search URL (determined from https://archive.org/advancedsearch.php)
       '///archive.org/advancedsearch.php?q=%28'
       + this.state.input + '%29%20AND%20mediatype%3A%28texts%29'
@@ -123,6 +116,7 @@ class Search extends React.Component {
         type: 'GET',
         dataType: 'jsonp',
         success: function(res) {
+          console.log('response', res);
           resolve(res);
         },
         error: function(jqXHR) {
@@ -130,11 +124,27 @@ class Search extends React.Component {
         }
       });
 		}).then((metadata) => {
+      const imageStack = metadata.files.filter((file) => {
+        return (
+          file.format === 'Single Page Processed JP2 Tar' ||
+          file.format === 'Single Page Processed JP2 ZIP' ||
+          file.format === 'Single Page Processed JPEG Tar' ||
+          file.format === 'Single Page Processed JPEG ZIP' ||
+          file.format === 'Single Page Processed TIFF ZIP'
+        )
+      });
+
+      if(imageStack.length === 0) throw 'Error: No Image Stack Found';
+
+      const firstImgStackName = imageStack[0].name;   //get name from first result (some books
+                                                      //have multiple image stacks; we'll ignore)
+      const subPrefix = firstImgStackName.split('_jp2')[0]; //strip format-specific endings
+
       //construct URL with which we will call BookReaderJSIA.php
       const reqUrl =
         '///' + metadata.server + '/BookReader/BookReaderJSIA.php?id='
         + metadata.metadata.identifier + '&itemPath=' + metadata.dir
-        + '&server=' + metadata.server + '&format=jsonp';
+        + '&server=' + metadata.server + '&format=jsonp&subPrefix=' + subPrefix;
 
       return new Promise((resolve, reject) => {
         $.ajax({
