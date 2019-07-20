@@ -1,4 +1,5 @@
 import React from 'react';
+import '../scripts/general.js';
 import $ from 'jquery';
 
 function SearchResults(props) {
@@ -44,7 +45,7 @@ class Search extends React.Component {
     super(props);
 
     this.state = {
-      input: 'the animals rebellion', //current query input
+      input: '', //current query input
       lastQuery: '', //last search query performed
       searchResults: [],
       loading: false //set 'true' when loading a search query
