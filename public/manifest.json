@@ -1,6 +1,6 @@
 {
-    "name": "BookReader Library PWA",
-    "short_name": "BookRdrLibPWA",
+    "name": "BookReader PWA",
+    "short_name": "BookRdrPWA",
     "icons": [
         {
         "src": "img/icons/icon-48x48.png",
