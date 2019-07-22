@@ -1,11 +1,13 @@
 import React from 'react';
-import '../scripts/general.js';
+import { getDataUri } from '../scripts/general.js';
 import $ from 'jquery';
 
 function SearchResults(props) {
   if(!props.query) //default view, no searches performed
     return (
-      <div></div>
+      <div>
+        <button onClick={() => props.onDownloadBook('InternetArchive_201803')}>Test download (for testing only)</button>
+      </div>
     )
   else if(props.loading) //if loading search query
     return (
@@ -71,7 +73,7 @@ class Search extends React.Component {
       }
     });
 
-    const maxRows = 10; //set to 0 for default (50); setting lower reduces server load
+    const maxRows = 25; //set to 0 for default (50); setting lower reduces server load
     let query = //construct search URL (determined from https://archive.org/advancedsearch.php)
       '///archive.org/advancedsearch.php?q=%28'
       + this.state.input + '%29%20AND%20mediatype%3A%28texts%29'
@@ -160,7 +162,31 @@ class Search extends React.Component {
           }
         });
       }).then((bookData) => { //leaf information contained in this object
-        console.log('bookData', bookData);
+        const bookImgArrays = [].concat(bookData.brOptions.data); //multiple arrays of leaf objects
+        let bookImgs = [];
+        //concatenate into a single array of leaf objects
+        bookImgArrays.forEach(function(bookImgArray) {
+          bookImgs = bookImgs.concat(bookImgArray);
+        });
+
+        //create an object to hold book data which will be stored in IndexedDB
+        let bookObj = {
+          identifier: bookData.metadata.identifier,
+          leafs: []
+        };
+
+        //assemble array of promises to get base64-format images to store in bookObj.leafs
+        let leafPromiseArr = [];
+        bookImgs.forEach(function(leaf) {
+          leafPromiseArr.push(getDataUri(leaf.uri));
+        });
+
+        //todo: test error somewhere in one of the images
+        return Promise.all(leafPromiseArr).then((leafImgsBase64) => {
+          bookObj.leafs = leafImgsBase64;
+
+          console.log('bookObj', bookObj);
+        });
       }).catch((error) => {
         console.log(error);
       });
