@@ -1,4 +1,4 @@
-#BookReader PWA
+# BookReader PWA
 
 The goal of this project is to make [Archive.org](https://archive.org/)'s eBooks available for download and offline usage with Progressive Web App technology.
 
