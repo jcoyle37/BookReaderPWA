@@ -6,7 +6,6 @@ import {
 export default function Header () {
   return (
     <nav className='header'>
-      Hello, welcome to your library!
       <button id='installBtn' style={{display: 'none'}}>Install for Offline Use</button>
 
       <ul className="linkList">

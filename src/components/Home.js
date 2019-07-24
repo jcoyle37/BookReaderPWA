@@ -6,9 +6,9 @@ import {
 export default function Home () {
   return (
     <div>
-      <Link className="homeLink" to="/search">
-        <span>Search</span>
-      </Link>
+      <h1>Your Library</h1>
+      <hr />
+
     </div>
   )
 }
