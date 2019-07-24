@@ -1,12 +1,11 @@
 import React from 'react';
-import { getDataUri } from '../scripts/general.js';
+import { getDataUri, setLocalStorage } from '../scripts/general.js';
 import $ from 'jquery';
 
 function SearchResults(props) {
   if(!props.query) //default view, no searches performed
     return (
       <div>
-        <button onClick={() => props.onDownloadBook('InternetArchive_201803')}>Test download (for testing only)</button>
       </div>
     )
   else if(props.loading) //if loading search query
@@ -111,6 +110,7 @@ class Search extends React.Component {
   }
 
   handleDownloadBook(id) {
+    //todo: disable download button and future books being downloaded while this is happening
     new Promise((resolve, reject) => {
       //get book metadata which will provide us with information needed to construct
       //a URL we can use to call BookReaderJSIA.php, which will provide book leaf URIs
@@ -171,7 +171,8 @@ class Search extends React.Component {
 
         //create an object to hold book data which will be stored in IndexedDB
         let bookObj = {
-          identifier: bookData.metadata.identifier,
+          title: bookData.brOptions.bookTitle,
+          identifier: bookData.brOptions.bookId,
           leafs: []
         };
 
@@ -185,7 +186,7 @@ class Search extends React.Component {
         return Promise.all(leafPromiseArr).then((leafImgsBase64) => {
           bookObj.leafs = leafImgsBase64;
 
-          console.log('bookObj', bookObj);
+          setLocalStorage('ebook_' + bookData.brOptions.bookId, bookObj);
         });
       }).catch((error) => {
         console.log(error);

@@ -1,4 +1,4 @@
-import { localforage } from 'localforage';
+import localforage from 'localforage';
 import $ from 'jquery';
 
 //get base64 image. Method enables cross-origin image requests
@@ -9,12 +9,12 @@ function getDataUri(targetUrl) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if(xhr.status == 4 || xhr.status == 200) {
+        //interpret blob as text
         var reader = new FileReader();
         reader.onloadend = function () {
           resolve(reader.result);
         };
         reader.readAsDataURL(xhr.response);
-        resolve(xhr.response);
       } else { //error
         reject(xhr.response);
       }
@@ -26,12 +26,11 @@ function getDataUri(targetUrl) {
   });
 }
 
-
 function setLocalStorage(key, value) {
   localforage.setDriver([
     localforage.INDEXEDDB
   ]).then(function() {
-    localforage.setItem(key, value, function() {
+    localforage.setItem(key, value).then(function(value) { //todo: test error handling here
       var displayValue = value;
 
       if(typeof value === 'string') {
@@ -39,7 +38,10 @@ function setLocalStorage(key, value) {
       }
 
       console.log('Saved value using: ' + localforage.driver(), displayValue);
+      //todo: if key starts with ebook_, in localstorage store this book id to populate library page. Test on reload
     });
+  }).catch((error) => {
+    console.log(error);
   });
 }
   
@@ -90,4 +92,4 @@ $(document).ready(function() {
   });
 });
 
-export { getDataUri }
+export { getDataUri, setLocalStorage }
