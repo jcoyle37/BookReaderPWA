@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDataUri, setLocalStorage } from '../scripts/general.js';
+import { getDataUri, setLocalStorage, modifyLibrary } from '../scripts/general.js';
 import $ from 'jquery';
 
 function SearchResults(props) {
@@ -169,10 +169,21 @@ class Search extends React.Component {
           bookImgs = bookImgs.concat(bookImgArray);
         });
 
-        //create an object to hold book data which will be stored in IndexedDB
+        //create an object to hold book data which will be stored in IndexedDB. This data will be
+        //needed to instantiate BookReader
         let bookObj = {
-          title: bookData.brOptions.bookTitle,
-          identifier: bookData.brOptions.bookId,
+          data: bookData.brOptions.data,
+          bookTitle: bookData.metadata.title,
+          metadata: [
+            {
+              label: 'Title',
+              value: bookData.metadata.title
+            },
+            {
+              label: 'Author',
+              value: bookData.metadata.creator
+            }
+          ],
           leafs: []
         };
 
@@ -186,7 +197,11 @@ class Search extends React.Component {
         return Promise.all(leafPromiseArr).then((leafImgsBase64) => {
           bookObj.leafs = leafImgsBase64;
 
-          setLocalStorage('ebook_' + bookData.brOptions.bookId, bookObj);
+          const ebookKey = 'ebook_' + bookData.brOptions.bookId;
+
+          setLocalStorage(ebookKey, bookObj);
+          modifyLibrary('add', ebookKey);
+          alert(bookData.metadata.title + ' successfully downloaded.');
         });
       }).catch((error) => {
         console.log(error);

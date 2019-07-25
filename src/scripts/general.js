@@ -38,10 +38,51 @@ function setLocalStorage(key, value) {
       }
 
       console.log('Saved value using: ' + localforage.driver(), displayValue);
-      //todo: if key starts with ebook_, in localstorage store this book id to populate library page. Test on reload
     });
   }).catch((error) => {
     console.log(error);
+  });
+}
+
+function modifyLibrary(type, key) {
+  localforage.getItem('booksInLibrary').then(function(booksInLibrary) {
+    let updatedBooksInLibrary;
+
+    if(booksInLibrary)
+      updatedBooksInLibrary = booksInLibrary;
+    else
+      updatedBooksInLibrary = [];
+
+    localforage.setDriver([
+      localforage.INDEXEDDB
+    ]).then(function() {
+      if(type === 'add') {
+        updatedBooksInLibrary.push(key);
+      }
+      localforage.setItem('booksInLibrary', updatedBooksInLibrary).then(function(value) { //todo: test error handling here
+        console.log('Saved value using: ' + localforage.driver(), value);
+      });
+    });
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+
+function getLibrary() {
+  return new Promise(function(resolve, reject) {
+    localforage.getItem('booksInLibrary').then(function(booksInLibrary) {
+      //assemble array of promises to get book data
+      let promiseArr = [];
+      booksInLibrary.forEach(function(book) {
+        promiseArr.push(localforage.getItem(book));
+      });
+
+      return Promise.all(promiseArr).then((bookData) => {
+        resolve(bookData);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
   });
 }
   
@@ -92,4 +133,4 @@ $(document).ready(function() {
   });
 });
 
-export { getDataUri, setLocalStorage }
+export { getDataUri, setLocalStorage, modifyLibrary, getLibrary }
