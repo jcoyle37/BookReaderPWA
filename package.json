@@ -1,6 +1,7 @@
 {
   "name": "BookReaderLibraryPWA",
   "version": "1.0.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "jquery": "^3.3.1",
