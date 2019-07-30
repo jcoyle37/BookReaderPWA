@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDataUri, setLocalStorage, modifyLibrary } from '../scripts/general.js';
+import { getDataUri, setLocalStorage, modifyLibraryList } from '../scripts/general.js';
 import $ from 'jquery';
 
 function SearchResults(props) {
@@ -200,7 +200,7 @@ class Search extends React.Component {
           const ebookKey = 'ebook_' + bookData.brOptions.bookId;
 
           setLocalStorage(ebookKey, bookObj);
-          modifyLibrary('add', ebookKey);
+          modifyLibraryList('add', ebookKey);
           alert(bookData.metadata.title + ' successfully downloaded.');
         });
       }).catch((error) => {

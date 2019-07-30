@@ -44,7 +44,7 @@ function setLocalStorage(key, value) {
   });
 }
 
-function modifyLibrary(type, key) {
+function modifyLibraryList(type, key) {
   localforage.getItem('booksInLibrary').then(function(booksInLibrary) {
     let updatedBooksInLibrary;
 
@@ -133,4 +133,4 @@ $(document).ready(function() {
   });
 });
 
-export { getDataUri, setLocalStorage, modifyLibrary, getLibrary }
+export { getDataUri, setLocalStorage, modifyLibraryList, getLibrary }
