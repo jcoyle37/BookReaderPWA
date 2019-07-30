@@ -133,4 +133,17 @@ $(document).ready(function() {
   });
 });
 
-export { getDataUri, setLocalStorage, modifyLibraryList, getLibrary }
+function stretchToBottom(selector) {
+  const distFromTop = selector.offsetTop;
+  selector.style.height = (window.innerHeight - distFromTop) + 'px';
+}
+
+$(window).on('resize', function() {
+  const iframe = document.querySelector("#brIframe");
+  
+  if(iframe)
+      stretchToBottom(iframe);
+});
+
+
+export { getDataUri, setLocalStorage, modifyLibraryList, getLibrary, stretchToBottom }

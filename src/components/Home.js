@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLibrary } from '../scripts/general.js';
+import { getLibrary, stretchToBottom } from '../scripts/general.js';
 import localforage from 'localforage';
 
 function LibraryItems(props) {
@@ -55,8 +55,7 @@ class Home extends React.Component {
         brIframe.contentWindow.postMessage(bookData);
       });
 
-      //todo: fix possible mutation not recommended by React
-      document.getElementById('brIframe').src = 'brview.html';
+      stretchToBottom(brIframe);
     }).catch((error) => {
       console.log(error);
     });
@@ -92,14 +91,7 @@ class Home extends React.Component {
           <button onClick={() => this.setState({
             bookOpen: false
           })}>Return to Library</button>
-          <br />
-          <iframe id="brIframe" style={{
-            width: '100%',
-            bottom: 28,
-            position: 'fixed',
-            top: 38,
-            zIndex: -1
-          }}></iframe>
+          <iframe id='brIframe' src='brview.html'></iframe>
         </div>
       )
     }

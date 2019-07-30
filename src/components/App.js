@@ -32,11 +32,6 @@ class App extends Component {
                 <Route path='/search' component={Search} />
               </div>
             </div>
-
-            <footer className="footer">
-              <span>Powered by The Internet Archive BookReader</span>
-            </footer>
-
           </div>
         </div>
 
