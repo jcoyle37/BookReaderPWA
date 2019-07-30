@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+        <title>BookReader Viewer</title>
+        
+        <!-- BookReader dependencies -->
+        <script src="./BookReader/jquery-1.10.1.js"></script>
+        <script src="./BookReader/jquery-ui-1.12.0.min.js"></script>
+        <script src="./BookReader/jquery.browser.min.js"></script>
+        <script src="./BookReader/dragscrollable-br.js"></script>
+        <script src="./BookReader/jquery.colorbox-min.js"></script>
+        <script src="./BookReader/jquery.bt.min.js"></script>
+        <script src="./BookReader/soundmanager/script/soundmanager2-jsmin.js"></script>
+
+        <!-- mmenu for mobile nav -->
+        <script src="./BookReader/mmenu/dist/js/jquery.mmenu.min.js"></script>
+        <script src="./BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.min.js" ></script>
+        <link rel="stylesheet" href="./BookReader/mmenu/dist/css/jquery.mmenu.css" />
+        <link rel="stylesheet" href="./BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.css" />
+
+        <!-- Bookreader -->
+        <script src="./BookReader/BookReader.js"></script>
+        <link rel="stylesheet" href="./BookReader/BookReader.css"/>
+
+        <!-- plugins needed for archive.org -->
+        <script src="./BookReader/plugins/plugin.url.js"></script>
+        <script src="./BookReader/plugins/plugin.resume.js"></script>
+        <script src="./BookReader/plugins/plugin.chapters.js"></script>
+        <script src="./BookReader/plugins/plugin.tts.js"></script>
+        <script src="./BookReader/plugins/plugin.search.js"></script>
+        <!--/ BookReader dependencies -->
+
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+            }
+        </style>
+	</head>
+
+	<body>
+        <div id="BookReader" style="width: 100%; height: 100%;"></div>
+  	</body>
+</html>
+
+<script>
+    if(window.addEventListener) {
+        window.addEventListener('message', onMessage);
+    } else if(window.attachEvent) {
+        window.attachEvent('onmessage', onMessage);
+    }
+
+    //utilize channel messaging to receive bookData to initialize BookReader with
+    //todo: look into more robust solution which won't take any message from anywhere as bookData
+    function onMessage(event) {
+        const bookData = event.data;
+
+        let options = {
+            data: bookData.data,
+
+            // Book title and the URL used for the book title link
+            bookTitle: bookData.bookTitle,
+            //bookUrlTitle: 'This is the book URL title',
+
+            // Metadata is optional, but it is used in the info dialog
+            metadata: [
+                {label: 'Title', value: bookData.metadata.title},
+                {label: 'Author', value: bookData.metadata.creator}
+                //{label: 'Demo Info', value: 'This demo shows how one could use BookReader with their own content.'},
+            ],
+
+            // Override the path used to find UI images
+            imagesBaseURL: '../BookReader/images/',
+
+            ui: 'full', // embed, full (responsive)
+
+            el: '#BookReader',
+        };
+        //Object.assign(options);
+        let br = new window.BookReader(options);
+        br.init();
+    }
+</script>

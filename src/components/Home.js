@@ -46,34 +46,17 @@ class Home extends React.Component {
       this.setState({
         bookOpen: true
       });
-      console.log('instantiate bookreader with', bookData);
+
+      const brIframe = document.getElementById('brIframe');
       
-      let selector = selector || '#BookReader';
+      //wait for the iframe to load
+      brIframe.addEventListener('load', function() {
+        //send message via channel messaging to iFrame containing bookData
+        brIframe.contentWindow.postMessage(bookData);
+      });
 
-      const options = {
-        data: bookData.data,
-
-        // Book title and the URL used for the book title link
-        bookTitle: bookData.bookTitle,
-        //bookUrlTitle: 'This is the book URL title',
-
-        // Metadata is optional, but it is used in the info dialog
-        metadata: [
-          {label: 'Title', value: bookData.metadata.title},
-          {label: 'Author', value: bookData.metadata.creator}
-          //{label: 'Demo Info', value: 'This demo shows how one could use BookReader with their own content.'},
-        ],
-
-        // Override the path used to find UI images
-        imagesBaseURL: '../BookReader/images/',
-
-        ui: 'full', // embed, full (responsive)
-
-        el: selector,
-      };
-      //Object.assign(options);
-      var br = new window.BookReader(options);
-      br.init();
+      //todo: fix possible mutation not recommended by React
+      document.getElementById('brIframe').src = 'brview.html';
     }).catch((error) => {
       console.log(error);
     });
@@ -110,13 +93,13 @@ class Home extends React.Component {
             bookOpen: false
           })}>Return to Library</button>
           <br />
-          <div id="BookReader" style={{
+          <iframe id="brIframe" style={{
             width: '100%',
             bottom: 28,
             position: 'fixed',
             top: 38,
             zIndex: -1
-          }}></div>
+          }}></iframe>
         </div>
       )
     }
