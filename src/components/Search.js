@@ -172,8 +172,10 @@ class Search extends React.Component {
         //create an object to hold book data which will be stored in IndexedDB. This data will be
         //needed to instantiate BookReader
         let bookObj = {
+          identifier: bookData.metadata.identifier,
           data: bookData.brOptions.data,
           bookTitle: bookData.metadata.title,
+          author: bookData.metadata.creator, //for library view
           metadata: [
             {
               label: 'Title',
