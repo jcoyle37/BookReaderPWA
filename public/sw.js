@@ -1,28 +1,29 @@
 var CACHE_NAME = 'bookreader-pwa-cache-v1';
-//todo: update these cached URLs
+
 var urlsToCache = [
+  'brview.html',
   'index.html',
 	'manifest.json',
-  'js/general.js',
 	'sw.js',
-  '/BookReader/jquery-1.10.1.js',
-  '/BookReader/jquery-ui-1.12.0.min.js',
-  '/BookReader/jquery.browser.min.js',
-  '/BookReader/dragscrollable-br.js',
-  '/BookReader/jquery.colorbox-min.js',
-  '/BookReader/jquery.bt.min.js',
-  '/BookReader/soundmanager/script/soundmanager2-jsmin.js',
-  '/BookReader/mmenu/dist/js/jquery.mmenu.min.js',
-  '/BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.min.js',
-  '/BookReader/mmenu/dist/css/jquery.mmenu.css',
-  '/BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.css',
-  '/BookReader/BookReader.js',
-  '/BookReader/BookReader.css',
-  '/BookReader/plugins/plugin.url.js',
-  '/BookReader/plugins/plugin.resume.js',
-  '/BookReader/plugins/plugin.chapters.js',
-  '/BookReader/plugins/plugin.tts.js',
-  '/BookReader/plugins/plugin.search.js'
+  'js/general.js',
+  'BookReader/jquery-1.10.1.js',
+  'BookReader/jquery-ui-1.12.0.min.js',
+  'BookReader/jquery.browser.min.js',
+  'BookReader/dragscrollable-br.js',
+  'BookReader/jquery.colorbox-min.js',
+  'BookReader/jquery.bt.min.js',
+  'BookReader/soundmanager/script/soundmanager2-jsmin.js',
+  'BookReader/mmenu/dist/js/jquery.mmenu.min.js',
+  'BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.min.js',
+  'BookReader/mmenu/dist/css/jquery.mmenu.css',
+  'BookReader/mmenu/dist/addons/navbars/jquery.mmenu.navbars.css',
+  'BookReader/BookReader.js',
+  'BookReader/BookReader.css',
+  'BookReader/plugins/plugin.url.js',
+  'BookReader/plugins/plugin.resume.js',
+  'BookReader/plugins/plugin.chapters.js',
+  'BookReader/plugins/plugin.tts.js',
+  'BookReader/plugins/plugin.search.js'
 ];
 
 self.addEventListener('install', function(event) {
