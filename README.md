@@ -15,13 +15,14 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 
 
 ## Todos
+- [ ] Introduce categorization of books into collections
+- [ ] Allow importing/exporting collections of books
 - [ ] Improve routing (try refreshing PWA...it ain't pretty)
 - [ ] Make brview.html channel messaging more robust
 - [ ] Make download buttons grayed out if book already in library
 - [ ] Prevent multiple simultaneous book downloads
 - [ ] Download progress bar
 - [ ] See if there's a less workaround-y way of bypassing CORS restriction with getDataUri function in general.js
-
 
 ## Available Scripts
 
