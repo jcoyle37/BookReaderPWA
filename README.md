@@ -5,6 +5,24 @@ The goal of this project is to make [Archive.org](https://archive.org/)'s eBooks
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 
+## Configuration
+
+### Enable install button for Progressive Web App
+
+1. If hosting on your own web server, make sure you're in compliance with the [PWA checklist](https://developers.google.com/web/progressive-web-apps/checklist)
+2. After building, be sure to set *"start_url"* in manifest.json to the correct path. For example, if you hosted
+the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"* would be */stuff/brpwa/index.html*
+
+
+## Todos
+- [ ] Improve routing (try refreshing PWA...it ain't pretty)
+- [ ] Make brview.html channel messaging more robust
+- [ ] Make download buttons grayed out if book already in library
+- [ ] Prevent multiple simultaneous book downloads
+- [ ] Download progress bar
+- [ ] See if there's a less workaround-y way of bypassing CORS restriction with getDataUri function in general.js
+
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -47,6 +65,7 @@ The source code license is AGPL v3, as described in the [LICENSE.md](LICENSE.md)
 
 * Richard Caceres, Hank Bromley, Mek Karpeles, and everyone involved in the [Internet Archive Bookreader](https://openlibrary.org/dev/docs/bookreader) project
 * [TylerMcGinnis.com's Free React.js Bootcamp](https://www.youtube.com/watch?v=8GXXGJRDMdQ)
+* Dominik Fiala's helpful article on [generating PWA icons](https://dev.to/dominikfiala/hassle-free-pwa-icons-and-splash-screen-generation-3c24)
 
 
 ## Learn More
