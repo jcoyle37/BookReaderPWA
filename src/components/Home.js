@@ -91,7 +91,7 @@ class Home extends React.Component {
           <button onClick={() => this.setState({
             bookOpen: false
           })}>Return to Library</button>
-          <iframe id='brIframe' src='brview.html'></iframe>
+          <iframe id='brIframe' src='./brview.html'></iframe>
         </div>
       )
     }
