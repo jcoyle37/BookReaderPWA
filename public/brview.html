@@ -29,6 +29,9 @@
         <script src="./BookReader/plugins/plugin.chapters.js"></script>
         <script src="./BookReader/plugins/plugin.tts.js"></script>
         <script src="./BookReader/plugins/plugin.search.js"></script>
+
+        <!-- custom function overrides -->
+        <script src="./js/BookReaderOverride.js"></script>
         <!--/ BookReader dependencies -->
 
         <style>
@@ -51,10 +54,12 @@
         window.attachEvent('onmessage', onMessage);
     }
 
+    let bookData;
+
     //utilize channel messaging to receive bookData to initialize BookReader with
     //todo: look into more robust solution which won't take any message from anywhere as bookData
     function onMessage(event) {
-        const bookData = event.data;
+        bookData = event.data;
 
         let options = {
             data: bookData.data,
