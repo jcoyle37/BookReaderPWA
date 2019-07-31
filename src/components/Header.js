@@ -3,6 +3,9 @@ import {
   NavLink
 } from 'react-router-dom';
 
+//<NavLink exact={true} className="nav-link" to={{pathname: './'}} activeClassName='active'>
+//<NavLink exact={true} className="nav-link" to={{pathname: './search'}} activeClassName='active'>
+
 export default function Header () {
   return (
     <nav className='header'>
@@ -23,4 +26,4 @@ export default function Header () {
       </ul>
     </nav>
   )
-}
+};
