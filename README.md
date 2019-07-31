@@ -2,6 +2,8 @@
 
 The goal of this project is to make [Archive.org](https://archive.org/)'s eBooks available for download and offline usage with Progressive Web App technology.
 
+Check out the [demo](https://joecoyle.net/other/BookReaderPWA/) (you may need to refresh your cache/clear site data as I update the page).
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 
@@ -17,7 +19,7 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 ## Todos
 - [ ] Introduce categorization of books into collections
 - [ ] Allow importing/exporting collections of books
-- [ ] Improve routing (try refreshing PWA...it ain't pretty)
+- [ ] Improve routing (try refreshing when on the search page, or even worse, dragging down to refresh PWA on Android...it ain't pretty)
 - [ ] Make brview.html channel messaging more robust
 - [ ] Make download buttons grayed out if book already in library
 - [ ] Prevent multiple simultaneous book downloads
