@@ -12,18 +12,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ### Enable install button for Progressive Web App
 
 1. If hosting on your own web server, make sure you're in compliance with the [PWA checklist](https://developers.google.com/web/progressive-web-apps/checklist)
-2. After building, be sure to set *"start_url"* in manifest.json to the correct path. For example, if you hosted
-the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"* would be */stuff/brpwa/index.html*
+2. After building, be sure to set *"start_url"* in *public/manifest.json* to the correct path. For example, if you hosted
+the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"* should be */stuff/brpwa/index.html*
 
 
 ## Todos
 - [ ] Introduce categorization of books into collections
-- [ ] Allow importing/exporting collections of books
-- [ ] Improve routing (try refreshing when on the search page, or even worse, dragging down to refresh PWA on Android...it ain't pretty)
-- [ ] Make brview.html channel messaging more robust
-- [ ] Make download buttons grayed out if book already in library
-- [ ] Prevent multiple simultaneous book downloads
-- [ ] Download progress bar
+- [ ] Allow importing collections of books
+- [ ] Improve routing to support relative paths (try hosting the page in a nested directory structure, then refreshing when on the search page. Even worse, try dragging down to refresh PWA on Android...it ain't pretty)
+- [ ] Make brview.html channel messaging more robust. Currently accepts messages of any type on any port from anywhere
+- [x] Make download button remain grayed out and display 'downloaded' when complete
+- [ ] For books already in library, have download button automatically grayed-out, displaying 'downloaded'
+- [ ] Prevent multiple simultaneous book downloads (queue, perhaps?)
+- [x] Download progress bar
+- [ ] For downloads paused due to closing then re-opening app, give option to resume downloading
 - [ ] See if there's a less workaround-y way of bypassing CORS restriction with getDataUri function in general.js
 
 ## Available Scripts
@@ -64,7 +66,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 The source code license is AGPL v3, as described in the [LICENSE.md](LICENSE.md) file.
 
 
-## Acknoweldgments
+## Acknowledgments
 
 * Richard Caceres, Hank Bromley, Mek Karpeles, and everyone involved in the [Internet Archive Bookreader](https://openlibrary.org/dev/docs/bookreader) project
 * [TylerMcGinnis.com's Free React.js Bootcamp](https://www.youtube.com/watch?v=8GXXGJRDMdQ)
