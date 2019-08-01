@@ -7,15 +7,21 @@ class DownloadBtn extends React.Component {
     super(props);
 
     this.state = {
-      disabled: false //set 'true' when downloading
+      downloading: false,
+      downloaded: false,
+      downloadBtnTxt: 'Download',
+      numLeafs: undefined,
+      downloadProgress: 0
     };
+
+    this.handleDownloadBook = this.handleDownloadBook.bind(this);
   }
 
   handleDownloadBook(id) {
-    //todo: set disabled = true always if already in library
-
-    //disable download button on click
-    this.setState({disabled: true});
+    this.setState({
+      downloading: true,
+      downloadBtnTxt: 'Getting page info...'
+    });
 
     //todo: disable other books being downloaded while this is happening
     new Promise((resolve, reject) => {
@@ -76,6 +82,11 @@ class DownloadBtn extends React.Component {
           bookImgs = bookImgs.concat(bookImgArray);
         });
 
+        this.setState({
+          downloadBtnTxt: 'Downloading...',
+          numLeafs: bookImgs.length
+        });
+
         //create an object to hold book data which will be stored in IndexedDB. This data will be
         //needed to instantiate BookReader
         let bookObj = {
@@ -98,8 +109,16 @@ class DownloadBtn extends React.Component {
 
         //assemble array of promises to get base64-format images to store in bookObj.leafs
         let leafPromiseArr = [];
-        bookImgs.forEach(function(leaf) {
-          leafPromiseArr.push(getDataUri(leaf.uri));
+        bookImgs.forEach((leaf) => {
+          let leafPromise = getDataUri(leaf.uri).then((base64img) => {
+            this.setState({
+              downloadProgress: this.state.downloadProgress+=1
+            });
+
+            return base64img;
+          });
+
+          leafPromiseArr.push(leafPromise);
         });
 
         //todo: test error somewhere in one of the images
@@ -111,6 +130,12 @@ class DownloadBtn extends React.Component {
           setLocalStorage(ebookKey, bookObj);
           modifyLibraryList('add', ebookKey);
           alert(bookData.metadata.title + ' successfully downloaded.');
+
+          this.setState({
+            downloading: false,
+            downloaded: true,
+            downloadBtnTxt: 'Downloaded'
+          });
         });
       }).catch((error) => {
         console.log(error);
@@ -119,13 +144,18 @@ class DownloadBtn extends React.Component {
   }
 
   render() {
-    const downloadBtnTxt = this.state.disabled ? 'Please wait...' : 'Download';
+    let downloadProgressTxt = '';
+    //if in process of downloading & 
+    if(this.state.downloading === true && this.state.numLeafs) {
+      downloadProgressTxt = ' (' + this.state.downloadProgress;
+      downloadProgressTxt += '/' + this.state.numLeafs + ')';
+    }
 
     return (
       <button
         onClick={() => this.handleDownloadBook(this.props.identifier)}
-        disabled={this.state.disabled}
-      >{downloadBtnTxt}</button>
+        disabled={this.state.downloading || this.state.downloaded}
+      >{this.state.downloadBtnTxt}{downloadProgressTxt}</button>
     );
   }
 }
