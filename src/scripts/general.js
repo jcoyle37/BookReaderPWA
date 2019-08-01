@@ -16,13 +16,15 @@ function getDataUri(targetUrl) {
         };
         reader.readAsDataURL(xhr.response);
       } else { //error
-        reject(xhr.response);
+        reject(null);
       }
     };
     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     xhr.open('GET', proxyUrl + targetUrl);
     xhr.responseType = 'blob';
     xhr.send();
+  }).catch(function(err) {
+    return err;
   });
 }
 
