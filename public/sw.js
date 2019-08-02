@@ -1,10 +1,10 @@
-var CACHE_NAME = 'bookreader-pwa-cache-v1';
+var CACHE_PREFIX = 'bookreader-pwa-cache';
+var CACHE_VERSION = 2;
+var CACHE_NAME = CACHE_PREFIX + '-v' + CACHE_VERSION;
 
 var urlsToCache = [
   'brview.html',
   'index.html',
-	'manifest.json',
-	'sw.js',
   'js/general.js',
   'BookReader/jquery-1.10.1.js',
   'BookReader/jquery-ui-1.12.0.min.js',
@@ -75,4 +75,20 @@ self.addEventListener('fetch', function(event) {
         );
       })
     );
+});
+
+//when a new service worker becomes active, delete all other caches created
+//by past service workers
+self.addEventListener("activate", function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (CACHE_NAME !== cacheName &&  cacheName.startsWith(CACHE_PREFIX)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
