@@ -7,7 +7,7 @@ import $ from 'jquery';
 function getDataUri(targetUrl) {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = function() {
       if(xhr.status == 4 || xhr.status == 200) {
         //interpret blob as text
         var reader = new FileReader();
@@ -46,8 +46,20 @@ function setLocalStorage(key, value) {
   });
 }
 
-function modifyLibraryList(type, key) {
-  localforage.getItem('booksInLibrary').then(function(booksInLibrary) {
+function removeLocalStorage(key) {
+  return new Promise(function(resolve, reject) {
+    localforage.removeItem(key).then(() => {
+      resolve(key);
+    }).catch(function(error) {
+      reject(error);
+    });
+  }).catch(function(error) {
+    console.log(error);
+  });
+}
+
+function modifyLibraryList(type, key, cb) {
+  localforage.getItem('booksInLibrary').then((booksInLibrary) => {
     let updatedBooksInLibrary;
 
     if(booksInLibrary)
@@ -57,11 +69,17 @@ function modifyLibraryList(type, key) {
 
     localforage.setDriver([
       localforage.INDEXEDDB
-    ]).then(function() {
+    ]).then(() => {
       if(type === 'add') {
         updatedBooksInLibrary.push(key);
+      } else if(type === 'remove') {
+        //filter out matching book ID
+        updatedBooksInLibrary = updatedBooksInLibrary.filter((id) => id !== key);
       }
-      localforage.setItem('booksInLibrary', updatedBooksInLibrary).then(function(value) { //todo: test error handling here
+      localforage.setItem('booksInLibrary', updatedBooksInLibrary).then((value) => { //todo: test error handling here
+        if(type === 'remove') 
+          //if removing, send updated array back to Home.js
+          cb(value);
         console.log('Saved value using: ' + localforage.driver(), value);
       });
     });
@@ -148,4 +166,4 @@ $(window).on('resize', function() {
 });
 
 
-export { getDataUri, setLocalStorage, modifyLibraryList, getLibrary, stretchToBottom }
+export { getDataUri, setLocalStorage, removeLocalStorage, modifyLibraryList, getLibrary, stretchToBottom }

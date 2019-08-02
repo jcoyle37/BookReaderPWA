@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLibrary, stretchToBottom } from '../scripts/general.js';
+import { getLibrary, stretchToBottom, modifyLibraryList, removeLocalStorage } from '../scripts/general.js';
 import localforage from 'localforage';
 
 function LibraryItems(props) {
@@ -18,9 +18,10 @@ function LibraryItems(props) {
     return (
       <ul className='libraryBooks'>
         {props.bookData.map((book) => (
-          <li key={'libraryBook_' + book.bookTitle}>
+          <li key={'libraryBook_' + book.identifier}>
             <span>{book.bookTitle}</span>
             &nbsp;<button onClick={() => props.onOpenBook(book.identifier)}>Open</button>
+            &nbsp;<button onClick={() => props.onDeleteBook(book.identifier)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -39,6 +40,7 @@ class Home extends React.Component {
     };
 
     this.handleOpenBook = this.handleOpenBook.bind(this);
+    this.handleDeleteBook = this.handleDeleteBook.bind(this);
   }
 
   handleOpenBook(id) {
@@ -59,6 +61,30 @@ class Home extends React.Component {
     }).catch((error) => {
       console.log(error);
     });
+  }
+
+  handleDeleteBook(id) {
+    let confirmed = window.confirm('Are you sure you want to delete ' + id + '?');
+    if(confirmed) {
+      const ebookKey = 'ebook_' + id;
+
+      //function which will update bookData to reflect new library list. Relies on callback
+      //from modifyLibraryList to get list state after item removal
+      let newBookData = (currKeys) => {
+        let updatedBookData = this.state.bookData.filter((e) => {
+          return(currKeys.indexOf('ebook_' + e.identifier) !== -1);
+        });
+
+        this.setState({
+          bookData: updatedBookData
+        });
+      };
+      
+      //relies on a successful removal from indexedDB before calling modifyLibraryList
+      removeLocalStorage(ebookKey).then((key) => {
+        modifyLibraryList('remove', key, newBookData);
+      });
+    }
   }
 
   componentDidMount() { //init
@@ -82,6 +108,7 @@ class Home extends React.Component {
             bookData={this.state.bookData}
             loading={this.state.loading}
             onOpenBook={this.handleOpenBook}
+            onDeleteBook={this.handleDeleteBook}
           />
         </div>
       )
