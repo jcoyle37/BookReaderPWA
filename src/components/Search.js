@@ -106,25 +106,29 @@ class DownloadBtn extends React.Component {
           ],
           leafs: []
         };
+        
+        //sequentially-chained promises courtesy of https://stackoverflow.com/a/36672042/2969615
+        //to alleviate load on the server and prevent HTTP status 429 responses
+        // Create a new empty promise (don't do that with real people ;)
+        let sequence = Promise.resolve();
 
-        //assemble array of promises to get base64-format images to store in bookObj.leafs
-        let leafPromiseArr = [];
+        // Loop over each leaf, and add on a promise to the
+        // end of the 'sequence' promise.
         bookImgs.forEach((leaf) => {
-          let leafPromise = getDataUri(leaf.uri).then((base64img) => {
+          // Chain one computation onto the sequence
+          sequence = sequence.then(() => {
+            return getDataUri(leaf.uri);
+          }).then((base64img) => {
+            bookObj.leafs.push(base64img); // Resolves for each file, one at a time.
+            
             this.setState({
               downloadProgress: this.state.downloadProgress+=1
             });
-
-            return base64img;
           });
-
-          leafPromiseArr.push(leafPromise);
         });
 
-        //todo: test error somewhere in one of the images
-        return Promise.all(leafPromiseArr).then((leafImgsBase64) => {
-          bookObj.leafs = leafImgsBase64;
-
+        // This resolves after the entire chain is resolved
+        sequence.then(() => {
           const ebookKey = 'ebook_' + bookData.brOptions.bookId;
 
           setLocalStorage(ebookKey, bookObj);
@@ -273,6 +277,11 @@ class Search extends React.Component {
     return (
       <div>
         <h1>Search The Internet Archive</h1>
+        <p>
+          Be warned! These books can be very large in size, as they consist of many image
+          files. If you're concerned about conserving storage space, consider only
+          downloading books with small page counts.
+        </p>
         <input
           type='Text'
           placeholder='Query'
