@@ -19,14 +19,20 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 ## Todos
 - [ ] Introduce categorization of books into collections
 - [ ] Allow importing collections of books
+- [x] Allow deletion of books
 - [ ] Improve routing to support relative paths (try hosting the page in a nested directory structure, then refreshing when on the search page. Even worse, try dragging down to refresh PWA on Android...it ain't pretty)
 - [ ] Make brview.html channel messaging more robust. Currently accepts messages of any type on any port from anywhere
 - [x] Make download button remain grayed out and display 'downloaded' when complete
 - [ ] For books already in library, have download button automatically grayed-out, displaying 'downloaded'
 - [ ] Prevent multiple simultaneous book downloads (queue, perhaps?)
 - [x] Download progress bar
-- [ ] For downloads paused due to closing then re-opening app, give option to resume downloading
 - [ ] See if there's a less workaround-y way of bypassing CORS restriction with getDataUri function in general.js
+
+## Bugs
+- [ ] When navigating from search page to library, 'No books in library' displayed briefly, then changes to the list of books
+- [ ] Searching within book does not work
+- [ ] If disconnected from network and searching, loads forever
+
 
 ## Available Scripts
 
