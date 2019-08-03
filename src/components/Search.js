@@ -111,19 +111,38 @@ class DownloadBtn extends React.Component {
         //to alleviate load on the server and prevent HTTP status 429 responses
         // Create a new empty promise (don't do that with real people ;)
         let sequence = Promise.resolve();
+        
+        //for tracking length of time from request to base64 image response. Will be used to
+        //delay response to alleviate HTTP 429 error responses, especially with longer books
+        let fetchTimeStart;
 
         // Loop over each leaf, and add on a promise to the
         // end of the 'sequence' promise.
         bookImgs.forEach((leaf) => {
+          fetchTimeStart = new Date().getTime();
+          let delay = 0;
+
           // Chain one computation onto the sequence
           sequence = sequence.then(() => {
             return getDataUri(leaf.uri);
           }).then((base64img) => {
+            const fetchTime = new Date().getTime() - fetchTimeStart;
+            const minFetchTime = 2000; //in ms
+
+            if(fetchTime < minFetchTime)
+              delay = minFetchTime - fetchTime;
+
+            return base64img;
+          //delay response
+          }).then(base64img => new Promise(resolve => setTimeout(() => resolve(base64img), delay)
+          )).then((base64img) => {
             bookObj.leafs.push(base64img); // Resolves for each file, one at a time.
-            
+                
             this.setState({
               downloadProgress: this.state.downloadProgress+=1
             });
+
+            fetchTimeStart = new Date().getTime();
           });
         });
 
