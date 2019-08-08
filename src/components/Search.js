@@ -122,15 +122,17 @@ class DownloadBtn extends React.Component {
           fetchTimeStart = new Date().getTime();
           let delay = 0;
 
+          const minImgFetchTime = 2000; //in ms; delays requests if they respond too quickly
+          const approxImgWidth = 1250; //in px; keeps images from being too large
+
           // Chain one computation onto the sequence
           sequence = sequence.then(() => {
-            return getDataUri(leaf.uri);
+            return getDataUri(leaf.uri + '&width=' + approxImgWidth);
           }).then((base64img) => {
             const fetchTime = new Date().getTime() - fetchTimeStart;
-            const minFetchTime = 2000; //in ms
 
-            if(fetchTime < minFetchTime)
-              delay = minFetchTime - fetchTime;
+            if(fetchTime < minImgFetchTime)
+              delay = minImgFetchTime - fetchTime;
 
             return base64img;
           //delay response
