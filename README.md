@@ -79,7 +79,7 @@ The source code license is AGPL v3, as described in the [LICENSE.md](LICENSE.md)
 
 ## Acknowledgments
 
-* Richard Caceres, Hank Bromley, Mek Karpeles, and everyone involved in the [Internet Archive Bookreader](https://openlibrary.org/dev/docs/bookreader) project
+* Richard Caceres, Hank Bromley, Mek Karpeles, Jason Buckner, and everyone involved in the [Internet Archive Bookreader](https://openlibrary.org/dev/docs/bookreader) project
 * [TylerMcGinnis.com's Free React.js Bootcamp](https://www.youtube.com/watch?v=8GXXGJRDMdQ)
 * Dominik Fiala's helpful article on [generating PWA icons](https://dev.to/dominikfiala/hassle-free-pwa-icons-and-splash-screen-generation-3c24)
 
