@@ -249,7 +249,9 @@ class Search extends React.Component {
     });
   }
 
-  handleSearch() { //triggered by clicking 'download' button
+  handleSearch(event) { //triggered by clicking 'download' button
+    event.preventDefault(); //prevent refresh on submit
+
     this.setState((currentState) => {
       return {
         loading: true,
@@ -303,13 +305,15 @@ class Search extends React.Component {
           files. If you're concerned about conserving storage space, consider only
           downloading books with small page counts.
         </p>
-        <input
-          type='Text'
-          placeholder='Query'
-          value={this.state.input}
-          onChange={this.updateInput}
-        />
-        <button onClick={this.handleSearch}>Search</button>
+        <form onSubmit={this.handleSearch}>
+          <input
+            type='Text'
+            placeholder='Query'
+            value={this.state.input}
+            onChange={this.updateInput}
+          />
+          <button type='submit'>Search</button>
+        </form>
 
         <hr />
 
