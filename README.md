@@ -23,7 +23,7 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 - [ ] Allow importing collections of books
 - [x] Allow deletion of books
 - [ ] Improve routing to support relative paths (try hosting the page in a nested directory structure, then refreshing when on the search page. Even worse, try dragging down to refresh PWA on Android...it ain't pretty)
-- [ ] Make brview.html channel messaging more robust. Currently accepts messages of any type on any port from anywhere
+- [ ] Make brview.html channel messaging more robust. Currently accepts messages of any type on any port
 - [x] Make download button remain grayed out and display 'downloaded' when complete
 - [ ] When loading library, check library list and if any of the values don't have corresponding keys in indexedDb, delete them from list
 - [ ] For books already in library, have download button automatically grayed-out, displaying 'downloaded'
