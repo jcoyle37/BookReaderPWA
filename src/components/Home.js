@@ -54,7 +54,7 @@ class Home extends React.Component {
       //wait for the iframe to load
       brIframe.addEventListener('load', function() {
         //send message via channel messaging to iFrame containing bookData
-        brIframe.contentWindow.postMessage(bookData);
+        brIframe.contentWindow.postMessage(bookData, window.location.origin);
       });
 
       stretchToBottom(brIframe);
