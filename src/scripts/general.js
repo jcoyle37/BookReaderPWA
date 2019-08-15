@@ -3,27 +3,55 @@ import $ from 'jquery';
 
 //get base64 image. Method enables cross-origin image requests
 //source: https://stackoverflow.com/a/44199382/2969615
-//todo: find a less workaround-y method
-function getDataUri(targetUrl) {
+function getDataUri(targetUrl, approxImgWidth, minImgFetchTime, maxFailedFetches) {
+  let errorCount = 0; //failed image fetch count
+  let delay = 0;
+
   return new Promise(function(resolve, reject) {
+    const fetchTimeStart = parseInt(new Date().getTime());
     var xhr = new XMLHttpRequest();
+
     xhr.onload = function() {
       if(xhr.status == 4 || xhr.status == 200) {
+        const resDate = parseInt(new Date(xhr.getResponseHeader('Date')).getTime());
+
+        if(resDate > fetchTimeStart) { //if not loaded from cache, compute a delay
+          const fetchDuration = new Date().getTime() - fetchTimeStart;
+
+          if(fetchDuration < minImgFetchTime)
+            delay = minImgFetchTime - fetchDuration;
+        }
+
         //interpret blob as text
         var reader = new FileReader();
         reader.onloadend = function () {
-          resolve(reader.result);
+          resolve(reader.result, delay);
         };
         reader.readAsDataURL(xhr.response);
       } else { //error
         reject(null);
       }
     };
+    xhr.onerror = function() {
+      if(errorCount <= maxFailedFetches) {
+        //retry image fetch after delay
+        setTimeout(() => {
+          this.open('GET', proxyUrl + targetUrl + '&width=' + approxImgWidth);
+          this.responseType = 'blob';
+          this.send();
+        }, minImgFetchTime);
+      } else {
+        reject(null);
+      }
+
+      errorCount++;
+    }
     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     xhr.open('GET', proxyUrl + targetUrl);
     xhr.responseType = 'blob';
     xhr.send();
-  }).catch(function(err) {
+  }).then(base64img => new Promise(resolve => setTimeout(() => resolve(base64img), delay) //delay return
+  )).catch(function(err) {
     return err;
   });
 }
