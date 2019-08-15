@@ -1,11 +1,11 @@
 var CACHE_PREFIX = 'bookreader-pwa-cache';
-var CACHE_VERSION = 2;
+var CACHE_VERSION = 3;
 var CACHE_NAME = CACHE_PREFIX + '-v' + CACHE_VERSION;
 
 var urlsToCache = [
   'brview.html',
   'index.html',
-  'js/general.js',
+  'js/BookReaderOverride.js',
   'BookReader/jquery-1.10.1.js',
   'BookReader/jquery-ui-1.12.0.min.js',
   'BookReader/jquery.browser.min.js',
@@ -23,7 +23,11 @@ var urlsToCache = [
   'BookReader/plugins/plugin.resume.js',
   'BookReader/plugins/plugin.chapters.js',
   'BookReader/plugins/plugin.tts.js',
-  'BookReader/plugins/plugin.search.js'
+  'BookReader/plugins/plugin.search.js',
+  'BookReader/images/BRicons.svg',
+  'BookReader/images/transparent.png',
+  'BookReader/images/icon_search_button.svg',
+  'BookReader/images/nav_control-dn.png'
 ];
 
 self.addEventListener('install', function(event) {
