@@ -18,8 +18,8 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 
 ## Todos
 - [x] Ensure requests for leaf images don't come in too quickly to alleviate HTTP 429 errors (especially for larger books)
-- [ ] On network disconnect, retry failed image fetch request until back online and successful
-- [ ] Allow previously cached images to bypass request delay
+- [x] On network disconnect, retry failed image fetch request until specified limit is reached
+- [x] Allow previously cached images to bypass request delay
 - [ ] Introduce categorization of books into collections
 - [ ] Allow importing collections of books
 - [x] Allow deletion of books
@@ -30,7 +30,6 @@ the contents of the build directory at *joecoyle.net/stuff/brpwa/*, *"start_url"
 - [ ] For books already in library, have download button automatically grayed-out, displaying 'downloaded'
 - [ ] Prevent multiple simultaneous book downloads (queue, perhaps?)
 - [x] Download progress bar
-- [ ] Have title reflect download progress
 - [ ] Push notification when download complete
 - [ ] See if there's a less workaround-y way of bypassing CORS restriction with getDataUri function in general.js
 
