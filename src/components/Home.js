@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLibrary, stretchToBottom, modifyLibraryList, removeLocalStorage } from '../scripts/general.js';
+import { getLibrary, stretchToBottom, setLocalStorage, modifyLibraryList, removeLocalStorage } from '../scripts/general.js';
 import localforage from 'localforage';
 
 function LibraryItems(props) {
@@ -21,6 +21,7 @@ function LibraryItems(props) {
           <li key={'libraryBook_' + book.identifier}>
             <span>{book.bookTitle}</span>
             &nbsp;<button onClick={() => props.onOpenBook(book.identifier)}>Open</button>
+            &nbsp;<button onClick={() => props.onExportBook(book.identifier)}>Export</button>
             &nbsp;<button onClick={() => props.onDeleteBook(book.identifier)}>Delete</button>
           </li>
         ))}
@@ -41,6 +42,7 @@ class Home extends React.Component {
 
     this.handleOpenBook = this.handleOpenBook.bind(this);
     this.handleDeleteBook = this.handleDeleteBook.bind(this);
+    this.handleImportBook = this.handleImportBook.bind(this);
   }
 
   handleOpenBook(id) {
@@ -58,6 +60,23 @@ class Home extends React.Component {
       });
 
       stretchToBottom(brIframe);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  handleExportBook(id) {
+    localforage.getItem('ebook_' + id).then((bookData) => {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/json;charset=utf-8,' + JSON.stringify(bookData));
+      element.setAttribute('download', bookData.identifier + '.arcOrgBk');
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
     }).catch((error) => {
       console.log(error);
     });
@@ -87,6 +106,34 @@ class Home extends React.Component {
     }
   }
 
+  handleImportBook(fileList) {
+    const numFiles = fileList.length;
+    for(var i=0; i < numFiles; i++) {
+      let tmpUrl = URL.createObjectURL(fileList[i]);
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', tmpUrl, true);
+      xhr.onreadystatechange = () => {
+          if (xhr.readyState == 4 && xhr.status == 200)
+          {
+              const newBookData = JSON.parse(xhr.responseText);
+              
+              const ebookKey = 'ebook_' + newBookData.identifier;
+              setLocalStorage(ebookKey, newBookData);
+              modifyLibraryList('add', ebookKey);
+
+              URL.revokeObjectURL(tmpUrl);
+
+              var newBookDataState = this.state.bookData;
+              newBookDataState.push(newBookData);
+              this.setState({
+                bookData: newBookDataState,
+              });
+          }
+      }
+      xhr.send();
+    }
+  }
+
   componentDidMount() { //init
     getLibrary().then((bookData) => {
       this.setState({
@@ -103,11 +150,15 @@ class Home extends React.Component {
       return (
         <div>
           <h1>Your Library</h1>
+          Inport eBook(s): <input type='file' multiple size='10'
+            onChange={(e) => { this.handleImportBook(e.target.files) }}
+          />
           <hr />
           <LibraryItems
             bookData={this.state.bookData}
             loading={this.state.loading}
             onOpenBook={this.handleOpenBook}
+            onExportBook={this.handleExportBook}
             onDeleteBook={this.handleDeleteBook}
           />
         </div>
