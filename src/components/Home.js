@@ -1,6 +1,7 @@
 import React from 'react';
 import { getLibrary, stretchToBottom, setLocalStorage, modifyLibraryList, removeLocalStorage } from '../scripts/general.js';
 import localforage from 'localforage';
+import { saveAs } from 'file-saver';
 
 function LibraryItems(props) {
   if(props.bookData.length === 0) { //if no book data
@@ -67,16 +68,8 @@ class Home extends React.Component {
 
   handleExportBook(id) {
     localforage.getItem('ebook_' + id).then((bookData) => {
-      var element = document.createElement('a');
-      element.setAttribute('href', 'data:text/json;charset=utf-8,' + JSON.stringify(bookData));
-      element.setAttribute('download', bookData.identifier + '.arcOrgBk');
-
-      element.style.display = 'none';
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
+      let blob = new Blob([JSON.stringify(bookData)], {type: "application/octet-stream;charset=utf-8"});
+      saveAs(blob, bookData.identifier + '.arcOrgBk');
     }).catch((error) => {
       console.log(error);
     });
@@ -146,6 +139,7 @@ class Home extends React.Component {
   }
 
   render() {
+    console.log('bookData', this.state.bookData);
     if(!this.state.bookOpen) {
       return (
         <div>

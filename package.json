@@ -1,9 +1,10 @@
 {
-  "name": "BookReaderLibraryPWA",
+  "name": "bookreader-library-pwa",
   "version": "1.0.0",
   "homepage": ".",
   "private": true,
   "dependencies": {
+    "file-saver": "^2.0.2",
     "jquery": "^3.3.1",
     "localforage": "^1.7.3",
     "react": "^16.8.5",
